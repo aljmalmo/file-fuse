@@ -635,12 +635,14 @@
         .guide-steps li {
             counter-increment: step-counter;
             margin-bottom: 20px;
-            padding-right: 60px;
             position: relative;
             background: var(--bg-secondary);
             border-radius: 15px;
-            padding: 20px 20px 20px 60px;
+            padding: 20px;
             transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 15px;
         }
 
         .guide-steps li:hover {
@@ -648,12 +650,7 @@
             box-shadow: var(--shadow-md);
         }
 
-        .guide-steps li::before {
-            content: counter(step-counter);
-            position: absolute;
-            right: 15px;
-            top: 50%;
-            transform: translateY(-50%);
+        .step-number {
             width: 40px;
             height: 40px;
             background: var(--primary-gradient);
@@ -665,6 +662,11 @@
             font-weight: 700;
             font-size: 1.2rem;
             box-shadow: var(--shadow-colored);
+            flex-shrink: 0;
+        }
+
+        .step-content {
+            flex: 1;
         }
 
         .notes {
@@ -774,13 +776,7 @@
         }
 
         [dir="ltr"] .guide-steps li {
-            padding-right: 20px;
-            padding-left: 60px;
-        }
-
-        [dir="ltr"] .guide-steps li::before {
-            right: auto;
-            left: 15px;
+            flex-direction: row-reverse; /* Reverse flex direction for LTR */
         }
 
         [dir="ltr"] .notes li {
@@ -881,12 +877,30 @@
         <section class="user-guide">
             <h2 data-ar="دليل الاستخدام" data-en="User Guide">دليل الاستخدام</h2>
             <ol class="guide-steps">
-                <li data-ar="رفع الملفات - اسحب الملفات إلى منطقة الرفع أو انقر لاختيارها" data-en="Upload Files - Drag files to the upload area or click to browse">رفع الملفات - اسحب الملفات إلى منطقة الرفع أو انقر لاختيارها</li>
-                <li data-ar="ترتيب الملفات - استخدم الأسهم لأعلى ولأسفل لترتيب الملفات كما تريد" data-en="Arrange Files - Use the up and down arrows to arrange files as needed">ترتيب الملفات - استخدم الأسهم لأعلى ولأسفل لترتيب الملفات كما تريد</li>
-                <li data-ar="اختيار صيغة الإخراج المناسبة من القائمة المنسدلة" data-en="Select Output Format - Choose the appropriate output format from the dropdown">اختيار صيغة الإخراج المناسبة من القائمة المنسدلة</li>
-                <li data-ar="اكتب اسم الملف الناتج الذي تريده" data-en="Enter Output Filename - Type the desired name for the merged file">اكتب اسم الملف الناتج الذي تريده</li>
-                <li data-ar="اضغط على زر 'دمج الملفات' لبدء العملية" data-en="Click 'Merge Files' button to start the process">اضغط على زر 'دمج الملفات' لبدء العملية</li>
-                <li data-ar="انتظر اكتمال العملية ثم قم بتنزيل الملف الناتج" data-en="Wait for completion then download the merged file">انتظر اكتمال العملية ثم قم بتنزيل الملف الناتج</li>
+                <li>
+                    <div class="step-number">1</div>
+                    <div class="step-content" data-ar="رفع الملفات - اسحب الملفات إلى منطقة الرفع أو انقر لاختيارها" data-en="Upload Files - Drag files to the upload area or click to browse">رفع الملفات - اسحب الملفات إلى منطقة الرفع أو انقر لاختيارها</div>
+                </li>
+                <li>
+                    <div class="step-number">2</div>
+                    <div class="step-content" data-ar="ترتيب الملفات - استخدم الأسهم لأعلى ولأسفل لترتيب الملفات كما تريد" data-en="Arrange Files - Use the up and down arrows to arrange files as needed">ترتيب الملفات - استخدم الأسهم لأعلى ولأسفل لترتيب الملفات كما تريد</div>
+                </li>
+                <li>
+                    <div class="step-number">3</div>
+                    <div class="step-content" data-ar="اختيار صيغة الإخراج المناسبة من القائمة المنسدلة" data-en="Select Output Format - Choose the appropriate output format from the dropdown">اختيار صيغة الإخراج المناسبة من القائمة المنسدلة</div>
+                </li>
+                <li>
+                    <div class="step-number">4</div>
+                    <div class="step-content" data-ar="اكتب اسم الملف الناتج الذي تريده" data-en="Enter Output Filename - Type the desired name for the merged file">اكتب اسم الملف الناتج الذي تريده</div>
+                </li>
+                <li>
+                    <div class="step-number">5</div>
+                    <div class="step-content" data-ar="اضغط على زر 'دمج الملفات' لبدء العملية" data-en="Click 'Merge Files' button to start the process">اضغط على زر 'دمج الملفات' لبدء العملية</div>
+                </li>
+                <li>
+                    <div class="step-number">6</div>
+                    <div class="step-content" data-ar="انتظر اكتمال العملية ثم قم بتنزيل الملف الناتج" data-en="Wait for completion then download the merged file">انتظر اكتمال العملية ثم قم بتنزيل الملف الناتج</div>
+                </li>
             </ol>
 
             <div class="notes">
@@ -1720,7 +1734,7 @@
             
             const iconMap = {
                 success: 'fa-check-circle',
-                error: 'fa-exclamation-circle',
+                error: 'fa-exclamation-triangle',
                 warning: 'fa-exclamation-triangle'
             };
             
