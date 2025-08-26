@@ -1,82 +1,1056 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>دمج الملفات - أداة دمج ملفات نصية وPDF وDOCX</title>
-  <link rel="stylesheet" href="style.css" />
-  <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mammoth@1.4.15/browser/mammoth.browser.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.0/papaparse.min.js"></script>
-  <link href="https://cdn.jsdelivr.net/npm/lucide-static@0.168.0/font/lucide.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>أداة دمج الملفات - File Merger Tool</title>
+    
+    <!-- External Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/docx/7.8.2/docx.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pptxgenjs/3.12.0/pptxgen.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #3b82f6;
+            --success-color: #10b981;
+            --error-color: #ef4444;
+            --warning-color: #f59e0b;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f3f4f6;
+            --bg-tertiary: #e5e7eb;
+            --text-primary: #111827;
+            --text-secondary: #6b7280;
+            --border-color: #d1d5db;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #1f2937;
+            --bg-secondary: #111827;
+            --bg-tertiary: #374151;
+            --text-primary: #f9fafb;
+            --text-secondary: #d1d5db;
+            --border-color: #4b5563;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background-color: var(--bg-primary);
+            box-shadow: var(--shadow-md);
+            padding: 20px 0;
+            margin-bottom: 30px;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        h1 {
+            font-size: 2rem;
+            color: var(--primary-color);
+            font-weight: 700;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: 2px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            background-color: var(--bg-tertiary);
+            transform: translateY(-2px);
+        }
+
+        main {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 30px;
+        }
+
+        @media (max-width: 768px) {
+            main {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .upload-section {
+            background-color: var(--bg-primary);
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .upload-area {
+            border: 3px dashed var(--border-color);
+            border-radius: 12px;
+            padding: 40px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            background-color: var(--bg-secondary);
+        }
+
+        .upload-area:hover,
+        .upload-area.dragover {
+            border-color: var(--primary-color);
+            background-color: var(--bg-tertiary);
+            transform: scale(1.02);
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .upload-text {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-bottom: 15px;
+        }
+
+        .upload-button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .upload-button:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .files-list {
+            margin-top: 30px;
+        }
+
+        .files-list h3 {
+            margin-bottom: 15px;
+            color: var(--text-primary);
+        }
+
+        .file-item {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.3s ease;
+        }
+
+        .file-item:hover {
+            transform: translateX(-5px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+        }
+
+        .file-icon {
+            font-size: 1.5rem;
+        }
+
+        .file-details {
+            flex: 1;
+        }
+
+        .file-name {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .file-size {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .file-actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .action-button {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .action-button:hover {
+            background-color: var(--bg-tertiary);
+            color: var(--primary-color);
+        }
+
+        .delete-button:hover {
+            color: var(--error-color);
+        }
+
+        .controls-section {
+            background-color: var(--bg-primary);
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: var(--shadow-md);
+            height: fit-content;
+        }
+
+        .control-group {
+            margin-bottom: 20px;
+        }
+
+        .control-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .select-input,
+        .text-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .select-input:focus,
+        .text-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .merge-button {
+            width: 100%;
+            background-color: var(--success-color);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .merge-button:hover:not(:disabled) {
+            background-color: #059669;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .merge-button:disabled {
+            background-color: var(--text-secondary);
+            cursor: not-allowed;
+        }
+
+        .user-guide {
+            background-color: var(--bg-primary);
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: var(--shadow-md);
+            margin-top: 30px;
+        }
+
+        .user-guide h2 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+
+        .guide-steps {
+            list-style: none;
+            counter-reset: step-counter;
+        }
+
+        .guide-steps li {
+            counter-increment: step-counter;
+            margin-bottom: 15px;
+            padding-right: 40px;
+            position: relative;
+        }
+
+        .guide-steps li::before {
+            content: counter(step-counter);
+            position: absolute;
+            right: 0;
+            top: 0;
+            background-color: var(--primary-color);
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        .notes {
+            background-color: var(--bg-secondary);
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .notes h3 {
+            color: var(--warning-color);
+            margin-bottom: 10px;
+        }
+
+        .notes ul {
+            list-style: none;
+            padding-right: 20px;
+        }
+
+        .notes li {
+            margin-bottom: 8px;
+            position: relative;
+        }
+
+        .notes li::before {
+            content: "•";
+            position: absolute;
+            right: -15px;
+            color: var(--warning-color);
+        }
+
+        .message {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 15px 25px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            z-index: 1000;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateX(-50%) translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(-50%) translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .message.success {
+            background-color: var(--success-color);
+        }
+
+        .message.error {
+            background-color: var(--error-color);
+        }
+
+        .message.warning {
+            background-color: var(--warning-color);
+        }
+
+        .preview-section {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: var(--bg-secondary);
+            border-radius: 8px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .preview-content {
+            font-family: monospace;
+            font-size: 0.875rem;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        .preview-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;
+        }
+
+        .encoding-selector {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .encoding-option {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .encoding-option.selected {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <!-- الشعار والعنوان -->
     <header>
-      <h1><i class="lucide-file-plus"></i> أداة دمج الملفات</h1>
-      <p>دمج ملفاتك (TXT, CSV, PDF, DOCX) في ملف واحد بسهولة</p>
+        <div class="header-content">
+            <h1>🔗 أداة دمج الملفات</h1>
+            <button class="theme-toggle" onclick="toggleTheme()">🌓 الوضع الليلي</button>
+        </div>
     </header>
 
-    <!-- وضع ليلي -->
-    <button id="darkModeToggle" class="btn btn-secondary">🌙 الوضع الليلي</button>
+    <div class="container">
+        <main>
+            <section class="upload-section">
+                <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
+                    <div class="upload-icon">📁</div>
+                    <p class="upload-text">اسحب وأفلت الملفات هنا أو انقر للاختيار</p>
+                    <button class="upload-button">اختيار الملفات</button>
+                    <input type="file" id="fileInput" multiple style="display: none;" onchange="handleFileSelect(event)">
+                </div>
 
-    <!-- قسم رفع الملفات -->
-    <section class="upload-section">
-      <div id="dropZone" class="drop-zone">
-        <i class="lucide-upload-cloud"></i>
-        <p>اسحب الملفات هنا أو انقر لاختيارها</p>
-        <input type="file" id="fileInput" multiple accept=".txt,.csv,.pdf,.docx,.doc" hidden />
-      </div>
-    </section>
+                <div class="files-list" id="filesList" style="display: none;">
+                    <h3>الملفات المرفوعة (<span id="fileCount">0</span>)</h3>
+                    <div id="filesContainer"></div>
+                </div>
+            </section>
 
-    <!-- قائمة الملفات المرفوعة -->
-    <section id="fileListSection" class="file-list-section hidden">
-      <h2>الملفات المرفوعة (<span id="fileCount">0</span>)</h2>
-      <p class="info">يمكنك سحب الملفات لتغيير الترتيب</p>
-      <ul id="fileList" class="file-list"></ul>
-    </section>
+            <aside class="controls-section">
+                <div class="control-group">
+                    <label for="outputFormat">صيغة الإخراج:</label>
+                    <select id="outputFormat" class="select-input" onchange="updateOutputOptions()">
+                        <option value="auto">تلقائي (حسب نوع الملفات)</option>
+                        <option value="txt">نص (TXT)</option>
+                        <option value="pdf">مستند PDF</option>
+                        <option value="zip">ملف مضغوط (ZIP)</option>
+                    </select>
+                </div>
 
-    <!-- خيارات الدمج -->
-    <section id="mergeOptions" class="merge-options hidden">
-      <div class="form-group">
-        <label for="outputFormat">اختر صيغة الملف الناتج:</label>
-        <select id="outputFormat" class="select">
-          <option value="txt">نص عادي (.txt)</option>
-          <option value="pdf">مستند PDF (.pdf)</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label for="outputFilename">اسم الملف النهائي:</label>
-        <input type="text" id="outputFilename" class="input" value="الملف_المدمج" placeholder="أدخل اسم الملف" />
-      </div>
-      <button id="mergeButton" class="btn btn-primary"> <i class="lucide-file-contract"></i> دمج الملفات</button>
-    </section>
+                <div class="control-group">
+                    <label for="outputName">اسم الملف الناتج:</label>
+                    <input type="text" id="outputName" class="text-input" placeholder="merged_file" value="merged_file">
+                </div>
 
-    <!-- شرح الاستخدام -->
-    <section class="guide-section">
-      <h2><i class="lucide-help-circle"></i> كيفية الاستخدام</h2>
-      <ol class="steps">
-        <li>ارفع ملفاتك (TXT, CSV, PDF, DOCX) باستخدام زر الرفع أو بالسحب والإفلات.</li>
-        <li>غير ترتيب الملفات حسب رغبتك بالسحب أو الأزرار.</li>
-        <li>اختر الصيغة النهائية (TXT أو PDF).</li>
-        <li>أدخل اسمًا للملف المدمج.</li>
-        <li>اضغط على "دمج الملفات" وقم بتنزيل النتيجة فورًا.</li>
-      </ol>
-      <div class="tips">
-        <strong>نصائح:</strong>
-        <ul>
-          <li>للحصول على أفضل نتيجة في PDF، استخدم ملفات نصية واضحة.</li>
-          <li>الملفات الفارغة سيتم تخطيها تلقائيًا.</li>
-          <li>الصور داخل DOCX أو PDF لن تظهر في النص المستخرج.</li>
-        </ul>
-      </div>
-    </section>
+                <div class="control-group">
+                    <label>ترميز النصوص:</label>
+                    <div class="encoding-selector">
+                        <div class="encoding-option selected" onclick="selectEncoding('utf-8')">UTF-8</div>
+                        <div class="encoding-option" onclick="selectEncoding('windows-1256')">ANSI</div>
+                    </div>
+                </div>
 
-    <!-- رسالة حالة -->
-    <div id="statusMessage" class="status hidden"></div>
-  </div>
+                <button class="merge-button" id="mergeButton" onclick="mergeFiles()" disabled>
+                    دمج الملفات
+                </button>
+            </aside>
+        </main>
 
-  <script src="script.js"></script>
+        <section class="user-guide">
+            <h2>📖 دليل الاستخدام</h2>
+            <ol class="guide-steps">
+                <li>رفع الملفات - اسحب الملفات إلى منطقة الرفع أو انقر لاختيارها</li>
+                <li>ترتيب الملفات - استخدم الأسهم لأعلى ولأسفل لترتيب الملفات كما تريد</li>
+                <li>اختيار صيغة الإخراج المناسبة من القائمة المنسدلة</li>
+                <li>اكتب اسم الملف الناتج الذي تريده</li>
+                <li>اضغط على زر "دمج الملفات" لبدء العملية</li>
+                <li>انتظر اكتمال العملية ثم قم بتنزيل الملف الناتج</li>
+            </ol>
+
+            <div class="notes">
+                <h3>ملاحظات مهمة:</h3>
+                <ul>
+                    <li>إذا كانت جميع الملفات من نفس الصيغة، ستحصل على ملف بنفس الصيغة</li>
+                    <li>إذا كانت الصيغ مختلفة، يمكنك اختيار ZIP أو تحويل النصوص فقط</li>
+                    <li>يدعم الأداة جميع أنواع الملفات النصية والثنائية الشائعة</li>
+                    <li>يمكنك معاينة محتوى الملفات النصية والصور قبل الدمج</li>
+                </ul>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // Global variables
+        let uploadedFiles = [];
+        let selectedEncoding = 'utf-8';
+        let isDarkMode = false;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            setupDragAndDrop();
+            loadTheme();
+        });
+
+        // Theme management
+        function toggleTheme() {
+            isDarkMode = !isDarkMode;
+            document.documentElement.setAttribute('data-theme', isDarkMode ? 'dark' : 'light');
+            localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
+        }
+
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                isDarkMode = true;
+                document.documentElement.setAttribute('data-theme', 'dark');
+            }
+        }
+
+        // Encoding selection
+        function selectEncoding(encoding) {
+            selectedEncoding = encoding;
+            document.querySelectorAll('.encoding-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            event.target.classList.add('selected');
+        }
+
+        // Drag and drop setup
+        function setupDragAndDrop() {
+            const uploadArea = document.getElementById('uploadArea');
+            
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.classList.add('dragover');
+            });
+
+            uploadArea.addEventListener('dragleave', () => {
+                uploadArea.classList.remove('dragover');
+            });
+
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+                handleFiles(e.dataTransfer.files);
+            });
+        }
+
+        // File handling
+        function handleFileSelect(event) {
+            handleFiles(event.target.files);
+        }
+
+        function handleFiles(files) {
+            const validFiles = [];
+            const invalidFiles = [];
+
+            Array.from(files).forEach(file => {
+                if (isFileSupported(file)) {
+                    validFiles.push(file);
+                } else {
+                    invalidFiles.push(file.name);
+                }
+            });
+
+            if (invalidFiles.length > 0) {
+                showMessage(`الملفات التالية غير مدعومة: ${invalidFiles.join(', ')}`, 'warning');
+            }
+
+            if (validFiles.length > 0) {
+                validFiles.forEach(file => {
+                    uploadedFiles.push({
+                        file: file,
+                        id: Date.now() + Math.random(),
+                        name: file.name,
+                        size: formatFileSize(file.size),
+                        type: getFileType(file.name)
+                    });
+                });
+
+                updateFilesList();
+                showMessage(`تم رفع ${validFiles.length} ملف بنجاح`, 'success');
+            }
+        }
+
+        function isFileSupported(file) {
+            const supportedTypes = [
+                'text/plain', 'text/csv', 'application/json', 'text/xml', 'text/log',
+                'application/javascript', 'text/x-python', 'text/x-c', 'text/x-c++',
+                'text/java', 'text/html', 'text/css', 'application/x-php', 'text/typescript',
+                'application/sql',
+                'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+                'application/pdf',
+                'image/jpeg', 'image/png', 'image/svg+xml'
+            ];
+
+            return supportedTypes.includes(file.type) || 
+                   file.name.match(/\.(txt|csv|json|xml|log|js|py|c|cpp|java|html|css|php|ts|sql|docx|xlsx|pptx|pdf|jpg|jpeg|png|svg)$/i);
+        }
+
+        function getFileType(filename) {
+            const ext = filename.split('.').pop().toLowerCase();
+            const typeMap = {
+                'txt': 'text', 'csv': 'spreadsheet', 'json': 'data', 'xml': 'data', 'log': 'text',
+                'js': 'code', 'py': 'code', 'c': 'code', 'cpp': 'code', 'java': 'code',
+                'html': 'code', 'css': 'code', 'php': 'code', 'ts': 'code', 'sql': 'code',
+                'docx': 'document', 'xlsx': 'spreadsheet', 'pptx': 'presentation',
+                'pdf': 'document', 'jpg': 'image', 'jpeg': 'image', 'png': 'image', 'svg': 'image'
+            };
+            return typeMap[ext] || 'file';
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        function updateFilesList() {
+            const filesList = document.getElementById('filesList');
+            const filesContainer = document.getElementById('filesContainer');
+            const fileCount = document.getElementById('fileCount');
+            const mergeButton = document.getElementById('mergeButton');
+
+            if (uploadedFiles.length === 0) {
+                filesList.style.display = 'none';
+                mergeButton.disabled = true;
+                return;
+            }
+
+            filesList.style.display = 'block';
+            fileCount.textContent = uploadedFiles.length;
+            mergeButton.disabled = false;
+
+            filesContainer.innerHTML = '';
+            uploadedFiles.forEach((fileObj, index) => {
+                const fileItem = createFileItem(fileObj, index);
+                filesContainer.appendChild(fileItem);
+            });
+
+            updateOutputOptions();
+        }
+
+        function createFileItem(fileObj, index) {
+            const div = document.createElement('div');
+            div.className = 'file-item';
+            div.draggable = true;
+            div.dataset.index = index;
+
+            const iconMap = {
+                'text': '📄',
+                'code': '💻',
+                'document': '📑',
+                'spreadsheet': '📊',
+                'presentation': '📽️',
+                'image': '🖼️',
+                'data': '📋',
+                'file': '📎'
+            };
+
+            div.innerHTML = `
+                <div class="file-info">
+                    <span class="file-icon">${iconMap[fileObj.type] || '📎'}</span>
+                    <div class="file-details">
+                        <div class="file-name">${fileObj.name}</div>
+                        <div class="file-size">${fileObj.size}</div>
+                    </div>
+                </div>
+                <div class="file-actions">
+                    <button class="action-button" onclick="moveFile(${index}, -1)" ${index === 0 ? 'disabled' : ''}>⬆️</button>
+                    <button class="action-button" onclick="moveFile(${index}, 1)" ${index === uploadedFiles.length - 1 ? 'disabled' : ''}>⬇️</button>
+                    <button class="action-button delete-button" onclick="removeFile(${index})">🗑️</button>
+                </div>
+            `;
+
+            // Add drag events
+            div.addEventListener('dragstart', handleDragStart);
+            div.addEventListener('dragover', handleDragOver);
+            div.addEventListener('drop', handleDrop);
+            div.addEventListener('dragend', handleDragEnd);
+
+            return div;
+        }
+
+        function moveFile(index, direction) {
+            const newIndex = index + direction;
+            if (newIndex >= 0 && newIndex < uploadedFiles.length) {
+                [uploadedFiles[index], uploadedFiles[newIndex]] = [uploadedFiles[newIndex], uploadedFiles[index]];
+                updateFilesList();
+            }
+        }
+
+        function removeFile(index) {
+            uploadedFiles.splice(index, 1);
+            updateFilesList();
+            showMessage('تم حذف الملف', 'success');
+        }
+
+        // Drag and drop for reordering
+        let draggedElement = null;
+
+        function handleDragStart(e) {
+            draggedElement = this;
+            this.style.opacity = '0.5';
+        }
+
+        function handleDragOver(e) {
+            if (e.preventDefault) {
+                e.preventDefault();
+            }
+            e.dataTransfer.dropEffect = 'move';
+            return false;
+        }
+
+        function handleDrop(e) {
+            if (e.stopPropagation) {
+                e.stopPropagation();
+            }
+
+            if (draggedElement !== this) {
+                const draggedIndex = parseInt(draggedElement.dataset.index);
+                const targetIndex = parseInt(this.dataset.index);
+                
+                const draggedFile = uploadedFiles[draggedIndex];
+                uploadedFiles.splice(draggedIndex, 1);
+                uploadedFiles.splice(targetIndex, 0, draggedFile);
+                
+                updateFilesList();
+            }
+
+            return false;
+        }
+
+        function handleDragEnd(e) {
+            this.style.opacity = '';
+        }
+
+        // Update output options based on uploaded files
+        function updateOutputOptions() {
+            const outputFormat = document.getElementById('outputFormat');
+            const currentFormats = [...new Set(uploadedFiles.map(f => f.file.name.split('.').pop().toLowerCase()))];
+            
+            // Clear existing options except auto, txt, pdf, zip
+            outputFormat.innerHTML = `
+                <option value="auto">تلقائي (حسب نوع الملفات)</option>
+                <option value="txt">نص (TXT)</option>
+                <option value="pdf">مستند PDF</option>
+                <option value="zip">ملف مضغوط (ZIP)</option>
+            `;
+
+            // Add specific format options if all files are same type
+            if (currentFormats.length === 1) {
+                const format = currentFormats[0];
+                if (format === 'docx') {
+                    outputFormat.innerHTML += '<option value="docx">مستند Word (DOCX)</option>';
+                } else if (format === 'xlsx') {
+                    outputFormat.innerHTML += '<option value="xlsx">جدول Excel (XLSX)</option>';
+                } else if (format === 'pptx') {
+                    outputFormat.innerHTML += '<option value="pptx">عرض تقديمي (PPTX)</option>';
+                }
+            }
+        }
+
+        // Main merge function
+        async function mergeFiles() {
+            const mergeButton = document.getElementById('mergeButton');
+            const outputFormat = document.getElementById('outputFormat').value;
+            const outputName = document.getElementById('outputName').value || 'merged_file';
+
+            mergeButton.disabled = true;
+            mergeButton.innerHTML = '<span class="loading"></span> جاري الدمج...';
+
+            try {
+                let result;
+
+                if (outputFormat === 'auto') {
+                    result = await autoMerge();
+                } else if (outputFormat === 'txt') {
+                    result = await mergeToText();
+                } else if (outputFormat === 'pdf') {
+                    result = await mergeToPDF();
+                } else if (outputFormat === 'zip') {
+                    result = await mergeToZip();
+                } else if (outputFormat === 'docx') {
+                    result = await mergeToDocx();
+                } else if (outputFormat === 'xlsx') {
+                    result = await mergeToXlsx();
+                } else if (outputFormat === 'pptx') {
+                    result = await mergeToPptx();
+                }
+
+                if (result) {
+                    const extension = outputFormat === 'auto' ? getFileExtension(result) : outputFormat;
+                    saveAs(result, `${outputName}.${extension}`);
+                    showMessage('تم دمج الملفات بنجاح!', 'success');
+                }
+            } catch (error) {
+                console.error('Merge error:', error);
+                showMessage('حدث خطأ أثناء دمج الملفات', 'error');
+            } finally {
+                mergeButton.disabled = false;
+                mergeButton.innerHTML = 'دمج الملفات';
+            }
+        }
+
+        // Auto merge logic
+        async function autoMerge() {
+            const fileTypes = [...new Set(uploadedFiles.map(f => f.file.name.split('.').pop().toLowerCase()))];
+            
+            if (fileTypes.length === 1) {
+                const type = fileTypes[0];
+                if (type === 'docx') return await mergeToDocx();
+                if (type === 'xlsx') return await mergeToXlsx();
+                if (type === 'pptx') return await mergeToPptx();
+            }
+            
+            return await mergeToZip();
+        }
+
+        // Text merge
+        async function mergeToText() {
+            let combinedText = '';
+            
+            for (const fileObj of uploadedFiles) {
+                try {
+                    const text = await readFileAsText(fileObj.file);
+                    combinedText += `\n\n=== ${fileObj.name} ===\n\n${text}`;
+                } catch (error) {
+                    combinedText += `\n\n=== ${fileObj.name} (خطأ في القراءة) ===\n\n`;
+                }
+            }
+            
+            return new Blob([combinedText], { type: 'text/plain;charset=utf-8' });
+        }
+
+        // PDF merge
+        async function mergeToPDF() {
+            const pdfDoc = await PDFLib.PDFDocument.create();
+            
+            for (const fileObj of uploadedFiles) {
+                try {
+                    if (fileObj.file.type === 'application/pdf') {
+                        const existingPdfBytes = await fileObj.file.arrayBuffer();
+                        const existingPdfDoc = await PDFLib.PDFDocument.load(existingPdfBytes);
+                        const pages = await pdfDoc.copyPages(existingPdfDoc, existingPdfDoc.getPageIndices());
+                        pages.forEach(page => pdfDoc.addPage(page));
+                    } else {
+                        const text = await readFileAsText(fileObj.file);
+                        const page = pdfDoc.addPage();
+                        page.drawText(text.substring(0, 4000), { x: 50, y: 700, size: 12 });
+                    }
+                } catch (error) {
+                    console.error('Error processing file for PDF:', error);
+                }
+            }
+            
+            const pdfBytes = await pdfDoc.save();
+            return new Blob([pdfBytes], { type: 'application/pdf' });
+        }
+
+        // ZIP merge
+        async function mergeToZip() {
+            const zip = new JSZip();
+            
+            for (const fileObj of uploadedFiles) {
+                try {
+                    const content = await fileObj.file.arrayBuffer();
+                    zip.file(fileObj.name, content);
+                } catch (error) {
+                    console.error('Error adding file to ZIP:', error);
+                }
+            }
+            
+            const content = await zip.generateAsync({ type: 'blob' });
+            return content;
+        }
+
+        // DOCX merge
+        async function mergeToDocx() {
+            const doc = new docx.Document({
+                sections: [{
+                    properties: {},
+                    children: []
+                }]
+            });
+
+            for (const fileObj of uploadedFiles) {
+                try {
+                    const text = await readFileAsText(fileObj.file);
+                    doc.addSection({
+                        properties: {},
+                        children: [
+                            new docx.Paragraph({
+                                text: fileObj.name,
+                                heading: docx.HeadingLevel.HEADING_1
+                            }),
+                            new docx.Paragraph({
+                                text: text,
+                                spacing: { after: 400 }
+                            })
+                        ]
+                    });
+                } catch (error) {
+                    doc.addSection({
+                        properties: {},
+                        children: [
+                            new docx.Paragraph({
+                                text: `${fileObj.name} (خطأ في القراءة)`,
+                                heading: docx.HeadingLevel.HEADING_1,
+                                color: 'FF0000'
+                            })
+                        ]
+                    });
+                }
+            }
+
+            return docx.Packer.toBlob(doc);
+        }
+
+        // XLSX merge
+        async function mergeToXlsx() {
+            const workbook = XLSX.utils.book_new();
+            
+            for (const fileObj of uploadedFiles) {
+                try {
+                    const data = await fileObj.file.arrayBuffer();
+                    const tempWorkbook = XLSX.read(data, { type: 'array' });
+                    
+                    tempWorkbook.SheetNames.forEach(sheetName => {
+                        const worksheet = tempWorkbook.Sheets[sheetName];
+                        const newSheetName = `${fileObj.name.replace('.xlsx', '')}_${sheetName}`;
+                        XLSX.utils.book_append_sheet(workbook, worksheet, newSheetName.substring(0, 31));
+                    });
+                } catch (error) {
+                    console.error('Error processing Excel file:', error);
+                }
+            }
+            
+            const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+            return new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        }
+
+        // PPTX merge
+        async function mergeToPptx() {
+            const pptx = new PptxGenJS();
+            
+            for (const fileObj of uploadedFiles) {
+                try {
+                    const slide = pptx.addSlide();
+                    slide.addText(fileObj.name, { x: 0.5, y: 0.5, fontSize: 24, bold: true });
+                    
+                    const text = await readFileAsText(fileObj.file);
+                    const lines = text.split('\n').slice(0, 20); // Limit to 20 lines
+                    lines.forEach((line, index) => {
+                        slide.addText(line, { x: 0.5, y: 1.5 + (index * 0.5), fontSize: 14 });
+                    });
+                } catch (error) {
+                    const slide = pptx.addSlide();
+                    slide.addText(`${fileObj.name} (خطأ في القراءة)`, { x: 0.5, y: 0.5, fontSize: 24, color: 'FF0000' });
+                }
+            }
+            
+            return pptx.writeFile({ outputType: 'blob' });
+        }
+
+        // Helper functions
+        async function readFileAsText(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = reject;
+                reader.readAsText(file, selectedEncoding);
+            });
+        }
+
+        function getFileExtension(blob) {
+            if (blob.type === 'application/pdf') return 'pdf';
+            if (blob.type.includes('word')) return 'docx';
+            if (blob.type.includes('sheet')) return 'xlsx';
+            if (blob.type.includes('presentation')) return 'pptx';
+            if (blob.type === 'application/zip') return 'zip';
+            return 'txt';
+        }
+
+        function showMessage(text, type) {
+            const message = document.createElement('div');
+            message.className = `message ${type}`;
+            message.textContent = text;
+            document.body.appendChild(message);
+
+            setTimeout(() => {
+                message.style.animation = 'slideDown 0.3s ease reverse';
+                setTimeout(() => message.remove(), 300);
+            }, 3000);
+        }
+    </script>
 </body>
 </html>
