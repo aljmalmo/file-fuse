@@ -5,6 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>File Merger Pro | أداة دمج الملفات الاحترافية</title>
     
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔗</text></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔗</text></svg>">
+    
+    <!-- Meta tags for better SEO and sharing -->
+    <meta name="description" content="أداة احترافية لدمج الملفات - دمج ملفات Excel, Word, PDF, TXT وغيرها بسهولة">
+    <meta name="keywords" content="دمج الملفات, merge files, excel merger, word merger, pdf merger, file merger pro">
+    <meta name="author" content="File Merger Pro">
+    <meta name="theme-color" content="#667eea">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="File Merger Pro | أداة دمج الملفات الاحترافية">
+    <meta property="og:description" content="أداة احترافية لدمج الملفات - دمج ملفات Excel, Word, PDF, TXT وغيرها بسهولة">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="">
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="File Merger Pro | أداة دمج الملفات الاحترافية">
+    <meta name="twitter:description" content="أداة احترافية لدمج الملفات - دمج ملفات Excel, Word, PDF, TXT وغيرها بسهولة">
+    
     <!-- External Libraries -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
@@ -705,6 +726,71 @@
             color: var(--warning-color);
         }
 
+        /* Footer */
+        footer {
+            background: var(--bg-primary);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            margin-top: 40px;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .footer-info {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+            font-weight: 500;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary-color);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .social-links a {
+            width: 40px;
+            height: 40px;
+            background: var(--bg-secondary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            background: var(--primary-gradient);
+            color: white;
+            transform: translateY(-3px);
+        }
+
         /* Messages */
         .message {
             position: fixed;
@@ -776,7 +862,7 @@
         }
 
         [dir="ltr"] .guide-steps li {
-            flex-direction: row-reverse; /* Reverse flex direction for LTR */
+            flex-direction: row-reverse;
         }
 
         [dir="ltr"] .notes li {
@@ -788,9 +874,102 @@
             right: auto;
             left: 0;
         }
+
+        [dir="ltr"] .footer-content {
+            flex-direction: row-reverse;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--bg-tertiary);
+            z-index: 9999;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .progress-container.active {
+            opacity: 1;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--primary-gradient);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        /* Tooltips */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 200px;
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            text-align: center;
+            border-radius: 8px;
+            padding: 8px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.875rem;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* Responsive improvements */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            h1 {
+                font-size: 2rem;
+                text-align: center;
+            }
+
+            .upload-area {
+                padding: 40px 20px;
+            }
+
+            .upload-text {
+                font-size: 1.2rem;
+            }
+
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .social-links {
+                justify-content: center;
+            }
+        }
     </style>
 </head>
 <body>
+    <!-- Progress Bar -->
+    <div class="progress-container" id="progressContainer">
+        <div class="progress-bar" id="progressBar"></div>
+    </div>
+
     <header>
         <div class="header-content">
             <div class="logo">
@@ -800,14 +979,20 @@
                 <h1 data-ar="أداة دمج الملفات الاحترافية" data-en="File Merger Pro">أداة دمج الملفات الاحترافية</h1>
             </div>
             <div class="header-controls">
-                <button class="control-btn" onclick="toggleLanguage()">
-                    <i class="fas fa-language"></i>
-                    <span data-ar="English" data-en="العربية">English</span>
-                </button>
-                <button class="control-btn" onclick="toggleTheme()">
-                    <i class="fas fa-moon"></i>
-                    <span data-ar="الوضع الليلي" data-en="Dark Mode">الوضع الليلي</span>
-                </button>
+                <div class="tooltip">
+                    <button class="control-btn" onclick="toggleLanguage()">
+                        <i class="fas fa-language"></i>
+                        <span data-ar="English" data-en="العربية">English</span>
+                    </button>
+                    <span class="tooltiptext" data-ar="تغيير اللغة" data-en="Change Language">تغيير اللغة</span>
+                </div>
+                <div class="tooltip">
+                    <button class="control-btn" onclick="toggleTheme()">
+                        <i class="fas fa-moon"></i>
+                        <span data-ar="الوضع الليلي" data-en="Dark Mode">الوضع الليلي</span>
+                    </button>
+                    <span class="tooltiptext" data-ar="التبديل بين الوضع الفاتح والداكن" data-en="Toggle light/dark mode">التبديل بين الوضع الفاتح والداكن</span>
+                </div>
             </div>
         </div>
     </header>
@@ -834,10 +1019,13 @@
                             <span data-ar="الملفات المرفوعة" data-en="Uploaded Files">الملفات المرفوعة</span>
                             <span class="files-count" id="fileCount">0</span>
                         </h3>
-                        <button class="clear-all-btn" onclick="clearAllFiles()">
-                            <i class="fas fa-trash-alt"></i>
-                            <span data-ar="مسح الكل" data-en="Clear All">مسح الكل</span>
-                        </button>
+                        <div class="tooltip">
+                            <button class="clear-all-btn" onclick="clearAllFiles()">
+                                <i class="fas fa-trash-alt"></i>
+                                <span data-ar="مسح الكل" data-en="Clear All">مسح الكل</span>
+                            </button>
+                            <span class="tooltiptext" data-ar="حذف جميع الملفات" data-en="Delete all files">حذف جميع الملفات</span>
+                        </div>
                     </div>
                     <div class="files-container" id="filesContainer"></div>
                 </div>
@@ -867,10 +1055,13 @@
                     </div>
                 </div>
 
-                <button class="merge-btn" id="mergeButton" onclick="mergeFiles()" disabled>
-                    <i class="fas fa-magic"></i>
-                    <span data-ar="دمج الملفات" data-en="Merge Files">دمج الملفات</span>
-                </button>
+                <div class="tooltip">
+                    <button class="merge-btn" id="mergeButton" onclick="mergeFiles()" disabled>
+                        <i class="fas fa-magic"></i>
+                        <span data-ar="دمج الملفات" data-en="Merge Files">دمج الملفات</span>
+                    </button>
+                    <span class="tooltiptext" data-ar="ابدأ عملية دمج الملفات" data-en="Start merging files">ابدأ عملية دمج الملفات</span>
+                </div>
             </aside>
         </main>
 
@@ -916,6 +1107,26 @@
                 </ul>
             </div>
         </section>
+
+        <footer>
+            <div class="footer-content">
+                <div class="footer-info">
+                    <p data-ar="© 2024 File Merger Pro. جميع الحقوق محفوظة." data-en="© 2024 File Merger Pro. All rights reserved.">© 2024 File Merger Pro. جميع الحقوق محفوظة.</p>
+                    <p data-ar="أداة احترافية لدمج الملفات بسهولة وسرعة" data-en="Professional tool for merging files easily and quickly">أداة احترافية لدمج الملفات بسهولة وسرعة</p>
+                </div>
+                <div class="footer-links">
+                    <a href="#" data-ar="عن الأداة" data-en="About">عن الأداة</a>
+                    <a href="#" data-ar="الدعم الفني" data-en="Support">الدعم الفني</a>
+                    <a href="#" data-ar="سياسة الخصوصية" data-en="Privacy Policy">سياسة الخصوصية</a>
+                </div>
+                <div class="social-links">
+                    <a href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" title="Twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="#" title="GitHub"><i class="fab fa-github"></i></a>
+                    <a href="#" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+        </footer>
     </div>
 
     <script>
@@ -950,7 +1161,8 @@
                 mergeError: "حدث خطأ أثناء دمج الملفات",
                 unsupportedFiles: "الملفات التالية غير مدعومة: {files}",
                 clearAll: "مسح الكل",
-                merging: "جاري الدمج..."
+                merging: "جاري الدمج...",
+                processing: "معالجة الملف: {name} ({current}/{total})"
             },
             en: {
                 title: "File Merger Pro",
@@ -975,7 +1187,8 @@
                 mergeError: "Error occurred while merging files",
                 unsupportedFiles: "The following files are not supported: {files}",
                 clearAll: "Clear All",
-                merging: "Merging..."
+                merging: "Merging...",
+                processing: "Processing file: {name} ({current}/{total})"
             }
         };
 
@@ -984,7 +1197,40 @@
             setupDragAndDrop();
             loadTheme();
             loadLanguage();
+            updateCurrentYear();
         });
+
+        // Update current year in footer
+        function updateCurrentYear() {
+            const yearElement = document.querySelector('footer p');
+            if (yearElement) {
+                const currentYear = new Date().getFullYear();
+                yearElement.innerHTML = yearElement.innerHTML.replace('2024', currentYear);
+            }
+        }
+
+        // Progress bar functions
+        function showProgress() {
+            const progressContainer = document.getElementById('progressContainer');
+            const progressBar = document.getElementById('progressBar');
+            progressContainer.classList.add('active');
+            progressBar.style.width = '0%';
+        }
+
+        function updateProgress(percent) {
+            const progressBar = document.getElementById('progressBar');
+            progressBar.style.width = percent + '%';
+        }
+
+        function hideProgress() {
+            const progressContainer = document.getElementById('progressContainer');
+            const progressBar = document.getElementById('progressBar');
+            progressBar.style.width = '100%';
+            setTimeout(() => {
+                progressContainer.classList.remove('active');
+                progressBar.style.width = '0%';
+            }, 500);
+        }
 
         // Language management
         function toggleLanguage() {
@@ -1321,6 +1567,8 @@
             mergeButton.disabled = true;
             mergeButton.innerHTML = '<span class="loading"></span> ' + translations[currentLang].merging;
 
+            showProgress();
+
             try {
                 let result;
 
@@ -1356,6 +1604,7 @@
             } finally {
                 mergeButton.disabled = false;
                 mergeButton.innerHTML = '<i class="fas fa-magic"></i> ' + translations[currentLang].mergeFiles;
+                hideProgress();
             }
         }
 
@@ -1377,7 +1626,10 @@
         async function mergeToText() {
             let combinedText = '';
             
-            for (const fileObj of uploadedFiles) {
+            for (let i = 0; i < uploadedFiles.length; i++) {
+                const fileObj = uploadedFiles[i];
+                updateProgress(((i + 1) / uploadedFiles.length) * 100);
+                
                 try {
                     const text = await readFileAsText(fileObj.file);
                     combinedText += `\n\n=== ${fileObj.name} ===\n\n${text}`;
@@ -1393,7 +1645,10 @@
         async function mergeToPDF() {
             const pdfDoc = await PDFLib.PDFDocument.create();
             
-            for (const fileObj of uploadedFiles) {
+            for (let i = 0; i < uploadedFiles.length; i++) {
+                const fileObj = uploadedFiles[i];
+                updateProgress(((i + 1) / uploadedFiles.length) * 100);
+                
                 try {
                     if (fileObj.file.type === 'application/pdf') {
                         const existingPdfBytes = await fileObj.file.arrayBuffer();
@@ -1418,7 +1673,10 @@
         async function mergeToZip() {
             const zip = new JSZip();
             
-            for (const fileObj of uploadedFiles) {
+            for (let i = 0; i < uploadedFiles.length; i++) {
+                const fileObj = uploadedFiles[i];
+                updateProgress(((i + 1) / uploadedFiles.length) * 100);
+                
                 try {
                     const content = await fileObj.file.arrayBuffer();
                     zip.file(fileObj.name, content);
@@ -1449,7 +1707,10 @@
                 }]
             });
 
-            for (const fileObj of uploadedFiles) {
+            for (let i = 0; i < uploadedFiles.length; i++) {
+                const fileObj = uploadedFiles[i];
+                updateProgress(((i + 1) / uploadedFiles.length) * 100);
+                
                 try {
                     // Extract text from DOCX file
                     const text = await extractTextFromDocx(fileObj.file);
@@ -1539,7 +1800,10 @@
             let maxColumns = 0;
             
             // Process each file in order
-            for (const fileObj of uploadedFiles) {
+            for (let i = 0; i < uploadedFiles.length; i++) {
+                const fileObj = uploadedFiles[i];
+                updateProgress(((i + 1) / uploadedFiles.length) * 100);
+                
                 try {
                     // Read the Excel file
                     const data = await fileObj.file.arrayBuffer();
@@ -1562,8 +1826,8 @@
                         
                         // Add data rows (skip header row for subsequent files)
                         const startRow = allData.length === 1 ? 1 : 0;
-                        for (let i = startRow; i < jsonData.length; i++) {
-                            const row = jsonData[i] || [];
+                        for (let j = startRow; j < jsonData.length; j++) {
+                            const row = jsonData[j] || [];
                             
                             // Ensure row has same number of columns as headers
                             while (row.length < maxColumns) {
@@ -1640,7 +1904,10 @@
                 { x: 1.5, y: 4, fontSize: 18, align: 'center' }
             );
             
-            for (const fileObj of uploadedFiles) {
+            for (let i = 0; i < uploadedFiles.length; i++) {
+                const fileObj = uploadedFiles[i];
+                updateProgress(((i + 1) / uploadedFiles.length) * 100);
+                
                 try {
                     const slide = pptx.addSlide();
                     
@@ -1655,10 +1922,10 @@
                     
                     // Add content in text boxes
                     let yPos = 1.5;
-                    for (let i = 0; i < Math.min(lines.length, 15); i++) {
+                    for (let j = 0; j < Math.min(lines.length, 15); j++) {
                         if (yPos > 6) break; // Stop if we run out of space
                         
-                        slide.addText(lines[i].substring(0, 100), { 
+                        slide.addText(lines[j].substring(0, 100), { 
                             x: 0.5, y: yPos, fontSize: 14, color: '555555' 
                         });
                         yPos += 0.4;
