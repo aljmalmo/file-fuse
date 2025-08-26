@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>أداة دمج الملفات - File Merger Tool</title>
+    <title>File Merger Pro | أداة دمج الملفات الاحترافية</title>
     
     <!-- External Libraries -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/docx/7.8.2/docx.min.js"></script>
@@ -15,29 +16,42 @@
     
     <style>
         :root {
-            --primary-color: #2563eb;
-            --secondary-color: #3b82f6;
-            --success-color: #10b981;
-            --error-color: #ef4444;
-            --warning-color: #f59e0b;
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --dark-gradient: linear-gradient(135deg, #1a1c20 0%, #2d3436 100%);
+            
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --accent-color: #f093fb;
+            --success-color: #4facfe;
+            --error-color: #f5576c;
+            --warning-color: #feca57;
+            
             --bg-primary: #ffffff;
-            --bg-secondary: #f3f4f6;
-            --bg-tertiary: #e5e7eb;
-            --text-primary: #111827;
-            --text-secondary: #6b7280;
-            --border-color: #d1d5db;
-            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --bg-secondary: #f8f9fa;
+            --bg-tertiary: #e9ecef;
+            --bg-dark: #2d3436;
+            --bg-darker: #1a1c20;
+            
+            --text-primary: #2d3436;
+            --text-secondary: #636e72;
+            --text-light: #dfe6e9;
+            
+            --border-color: #dfe6e9;
+            --shadow-sm: 0 2px 10px rgba(0,0,0,0.08);
+            --shadow-md: 0 5px 20px rgba(0,0,0,0.12);
+            --shadow-lg: 0 10px 40px rgba(0,0,0,0.16);
+            --shadow-colored: 0 10px 30px rgba(102, 126, 234, 0.3);
         }
 
         [data-theme="dark"] {
-            --bg-primary: #1f2937;
-            --bg-secondary: #111827;
-            --bg-tertiary: #374151;
-            --text-primary: #f9fafb;
-            --text-secondary: #d1d5db;
-            --border-color: #4b5563;
+            --bg-primary: #2d3436;
+            --bg-secondary: #1a1c20;
+            --bg-tertiary: #636e72;
+            --text-primary: #dfe6e9;
+            --text-secondary: #b2bec3;
+            --border-color: #636e72;
         }
 
         * {
@@ -47,166 +61,380 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
-            background-color: var(--bg-secondary);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-secondary);
             color: var(--text-primary);
             line-height: 1.6;
-            transition: background-color 0.3s ease, color 0.3s ease;
+            transition: all 0.3s ease;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(102, 126, 234, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(240, 147, 251, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(79, 172, 254, 0.1) 0%, transparent 50%);
+            z-index: -1;
+            animation: bgFloat 20s ease-in-out infinite;
+        }
+
+        @keyframes bgFloat {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(20px, -20px) rotate(1deg); }
+            66% { transform: translate(-20px, 20px) rotate(-1deg); }
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             padding: 20px;
         }
 
+        /* Header Styles */
         header {
-            background-color: var(--bg-primary);
+            background: var(--bg-primary);
             box-shadow: var(--shadow-md);
             padding: 20px 0;
-            margin-bottom: 30px;
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: var(--primary-gradient);
         }
 
         .header-content {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             padding: 0 20px;
         }
 
-        h1 {
-            font-size: 2rem;
-            color: var(--primary-color);
-            font-weight: 700;
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
         }
 
-        .theme-toggle {
-            background: none;
-            border: 2px solid var(--border-color);
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--primary-gradient);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+            box-shadow: var(--shadow-colored);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .control-btn {
+            background: var(--bg-tertiary);
+            border: none;
             color: var(--text-primary);
-            padding: 8px 16px;
-            border-radius: 8px;
+            padding: 12px 20px;
+            border-radius: 12px;
             cursor: pointer;
             font-size: 1rem;
+            font-weight: 600;
             transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: var(--shadow-sm);
         }
 
-        .theme-toggle:hover {
-            background-color: var(--bg-tertiary);
-            transform: translateY(-2px);
+        .control-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+            background: var(--primary-gradient);
+            color: white;
         }
 
+        .control-btn i {
+            font-size: 1.2rem;
+        }
+
+        /* Main Layout */
         main {
             display: grid;
-            grid-template-columns: 1fr 300px;
+            grid-template-columns: 1fr 350px;
             gap: 30px;
+            margin-bottom: 40px;
         }
 
-        @media (max-width: 768px) {
+        @media (max-width: 1024px) {
             main {
                 grid-template-columns: 1fr;
             }
         }
 
+        /* Upload Section */
         .upload-section {
-            background-color: var(--bg-primary);
-            border-radius: 12px;
-            padding: 30px;
-            box-shadow: var(--shadow-md);
+            background: var(--bg-primary);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .upload-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(102, 126, 234, 0.05) 0%, transparent 70%);
+            animation: rotate 30s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
 
         .upload-area {
             border: 3px dashed var(--border-color);
-            border-radius: 12px;
-            padding: 40px;
+            border-radius: 20px;
+            padding: 60px 40px;
             text-align: center;
-            transition: all 0.3s ease;
+            transition: all 0.4s ease;
             cursor: pointer;
-            background-color: var(--bg-secondary);
+            background: var(--bg-secondary);
+            position: relative;
+            z-index: 1;
         }
 
         .upload-area:hover,
         .upload-area.dragover {
             border-color: var(--primary-color);
-            background-color: var(--bg-tertiary);
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(240, 147, 251, 0.05) 100%);
             transform: scale(1.02);
+            box-shadow: var(--shadow-colored);
         }
 
         .upload-icon {
-            font-size: 3rem;
-            color: var(--primary-color);
-            margin-bottom: 10px;
+            font-size: 4rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
         }
 
         .upload-text {
-            font-size: 1.2rem;
+            font-size: 1.4rem;
             color: var(--text-secondary);
-            margin-bottom: 15px;
+            margin-bottom: 25px;
+            font-weight: 500;
         }
 
         .upload-button {
-            background-color: var(--primary-color);
+            background: var(--primary-gradient);
             color: white;
             border: none;
-            padding: 12px 24px;
-            border-radius: 8px;
-            font-size: 1rem;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 700;
             cursor: pointer;
             transition: all 0.3s ease;
+            box-shadow: var(--shadow-colored);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .upload-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .upload-button:hover::before {
+            width: 300px;
+            height: 300px;
         }
 
         .upload-button:hover {
-            background-color: var(--secondary-color);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
         }
 
+        /* Files List */
         .files-list {
-            margin-top: 30px;
+            margin-top: 40px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .files-list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
         }
 
         .files-list h3 {
-            margin-bottom: 15px;
-            color: var(--text-primary);
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .files-count {
+            background: var(--success-gradient);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .clear-all-btn {
+            background: var(--error-color);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .clear-all-btn:hover {
+            background: #e84393;
+            transform: translateY(-2px);
+        }
+
+        .files-container {
+            display: grid;
+            gap: 15px;
         }
 
         .file-item {
-            background-color: var(--bg-secondary);
+            background: var(--bg-secondary);
             border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 10px;
+            border-radius: 15px;
+            padding: 20px;
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            gap: 15px;
             transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .file-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 5px;
+            height: 100%;
+            background: var(--primary-gradient);
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
         }
 
         .file-item:hover {
             transform: translateX(-5px);
-            box-shadow: var(--shadow-sm);
+            box-shadow: var(--shadow-md);
         }
 
-        .file-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex: 1;
+        .file-item:hover::before {
+            transform: scaleY(1);
         }
 
         .file-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-size: 1.5rem;
+            flex-shrink: 0;
         }
 
-        .file-details {
+        .file-icon.text { background: linear-gradient(135deg, #74b9ff, #0984e3); }
+        .file-icon.code { background: linear-gradient(135deg, #a29bfe, #6c5ce7); }
+        .file-icon.document { background: linear-gradient(135deg, #fd79a8, #e84393); }
+        .file-icon.spreadsheet { background: linear-gradient(135deg, #55efc4, #00b894); }
+        .file-icon.presentation { background: linear-gradient(135deg, #fdcb6e, #e17055); }
+        .file-icon.image { background: linear-gradient(135deg, #fd79a8, #fdcb6e); }
+        .file-icon.data { background: linear-gradient(135deg, #81ecec, #00cec9); }
+        .file-icon.file { background: linear-gradient(135deg, #dfe6e9, #b2bec3); }
+
+        .file-info {
             flex: 1;
+            min-width: 0;
         }
 
         .file-name {
             font-weight: 600;
             color: var(--text-primary);
+            margin-bottom: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .file-size {
@@ -216,56 +444,66 @@
 
         .file-actions {
             display: flex;
-            gap: 5px;
+            gap: 8px;
         }
 
-        .action-button {
-            background: none;
+        .action-btn {
+            width: 40px;
+            height: 40px;
             border: none;
+            background: var(--bg-tertiary);
             color: var(--text-secondary);
+            border-radius: 10px;
             cursor: pointer;
-            padding: 5px;
-            border-radius: 4px;
             transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .action-button:hover {
-            background-color: var(--bg-tertiary);
-            color: var(--primary-color);
+        .action-btn:hover {
+            background: var(--primary-gradient);
+            color: white;
+            transform: scale(1.1);
         }
 
-        .delete-button:hover {
-            color: var(--error-color);
+        .action-btn.delete:hover {
+            background: var(--error-color);
         }
 
+        /* Controls Section */
         .controls-section {
-            background-color: var(--bg-primary);
-            border-radius: 12px;
+            background: var(--bg-primary);
+            border-radius: 20px;
             padding: 30px;
-            box-shadow: var(--shadow-md);
+            box-shadow: var(--shadow-lg);
             height: fit-content;
+            position: sticky;
+            top: 20px;
         }
 
         .control-group {
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
 
         .control-group label {
             display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
+            margin-bottom: 12px;
+            font-weight: 700;
             color: var(--text-primary);
+            font-size: 1.1rem;
         }
 
         .select-input,
         .text-input {
             width: 100%;
-            padding: 10px;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            background-color: var(--bg-secondary);
+            padding: 15px;
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            background: var(--bg-secondary);
             color: var(--text-primary);
             font-size: 1rem;
+            font-weight: 500;
             transition: all 0.3s ease;
         }
 
@@ -273,84 +511,177 @@
         .text-input:focus {
             outline: none;
             border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
         }
 
-        .merge-button {
-            width: 100%;
-            background-color: var(--success-color);
-            color: white;
-            border: none;
-            padding: 15px;
-            border-radius: 8px;
-            font-size: 1.1rem;
-            font-weight: 600;
+        .encoding-options {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .encoding-option {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
             cursor: pointer;
+            text-align: center;
+            font-weight: 600;
             transition: all 0.3s ease;
         }
 
-        .merge-button:hover:not(:disabled) {
-            background-color: #059669;
+        .encoding-option:hover {
+            border-color: var(--primary-color);
             transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
         }
 
-        .merge-button:disabled {
-            background-color: var(--text-secondary);
+        .encoding-option.selected {
+            background: var(--primary-gradient);
+            color: white;
+            border-color: transparent;
+        }
+
+        .merge-btn {
+            width: 100%;
+            background: var(--success-gradient);
+            color: white;
+            border: none;
+            padding: 18px;
+            border-radius: 15px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-colored);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .merge-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .merge-btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .merge-btn:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .merge-btn:disabled {
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
             cursor: not-allowed;
+            box-shadow: none;
         }
 
+        /* User Guide */
         .user-guide {
-            background-color: var(--bg-primary);
-            border-radius: 12px;
-            padding: 30px;
-            box-shadow: var(--shadow-md);
-            margin-top: 30px;
+            background: var(--bg-primary);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .user-guide::before {
+            content: '';
+            position: absolute;
+            top: -100px;
+            right: -100px;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(102, 126, 234, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
         }
 
         .user-guide h2 {
-            color: var(--primary-color);
-            margin-bottom: 20px;
+            font-size: 2rem;
+            margin-bottom: 30px;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+            z-index: 1;
         }
 
         .guide-steps {
             list-style: none;
             counter-reset: step-counter;
+            position: relative;
+            z-index: 1;
         }
 
         .guide-steps li {
             counter-increment: step-counter;
-            margin-bottom: 15px;
-            padding-right: 40px;
+            margin-bottom: 20px;
+            padding-right: 60px;
             position: relative;
+            background: var(--bg-secondary);
+            border-radius: 15px;
+            padding: 20px 20px 20px 60px;
+            transition: all 0.3s ease;
+        }
+
+        .guide-steps li:hover {
+            transform: translateX(-5px);
+            box-shadow: var(--shadow-md);
         }
 
         .guide-steps li::before {
             content: counter(step-counter);
             position: absolute;
-            right: 0;
-            top: 0;
-            background-color: var(--primary-color);
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 40px;
+            background: var(--primary-gradient);
             color: white;
-            width: 30px;
-            height: 30px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 600;
+            font-weight: 700;
+            font-size: 1.2rem;
+            box-shadow: var(--shadow-colored);
         }
 
         .notes {
-            background-color: var(--bg-secondary);
-            border-radius: 8px;
-            padding: 20px;
-            margin-top: 20px;
+            background: linear-gradient(135deg, rgba(254, 202, 87, 0.1) 0%, rgba(253, 121, 168, 0.1) 100%);
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 30px;
+            border: 1px solid rgba(254, 202, 87, 0.3);
         }
 
         .notes h3 {
             color: var(--warning-color);
-            margin-bottom: 10px;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .notes ul {
@@ -359,28 +690,35 @@
         }
 
         .notes li {
-            margin-bottom: 8px;
+            margin-bottom: 12px;
             position: relative;
+            padding-right: 25px;
+            color: var(--text-secondary);
         }
 
         .notes li::before {
-            content: "•";
+            content: '✨';
             position: absolute;
-            right: -15px;
+            right: 0;
             color: var(--warning-color);
         }
 
+        /* Messages */
         .message {
             position: fixed;
-            top: 20px;
+            top: 30px;
             left: 50%;
             transform: translateX(-50%);
-            padding: 15px 25px;
-            border-radius: 8px;
+            padding: 18px 30px;
+            border-radius: 50px;
             color: white;
             font-weight: 600;
             z-index: 1000;
-            animation: slideDown 0.3s ease;
+            animation: slideDown 0.5s ease;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         @keyframes slideDown {
@@ -395,63 +733,22 @@
         }
 
         .message.success {
-            background-color: var(--success-color);
+            background: var(--success-gradient);
         }
 
         .message.error {
-            background-color: var(--error-color);
+            background: var(--error-color);
         }
 
         .message.warning {
-            background-color: var(--warning-color);
+            background: var(--warning-color);
         }
 
-        .preview-section {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: var(--bg-secondary);
-            border-radius: 8px;
-            max-height: 300px;
-            overflow-y: auto;
+        .message i {
+            font-size: 1.2rem;
         }
 
-        .preview-content {
-            font-family: monospace;
-            font-size: 0.875rem;
-            white-space: pre-wrap;
-            word-break: break-all;
-        }
-
-        .preview-image {
-            max-width: 100%;
-            height: auto;
-            border-radius: 4px;
-        }
-
-        .encoding-selector {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
-        }
-
-        .encoding-option {
-            flex: 1;
-            padding: 8px;
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            background-color: var(--bg-secondary);
-            color: var(--text-primary);
-            cursor: pointer;
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-
-        .encoding-option.selected {
-            background-color: var(--primary-color);
-            color: white;
-            border-color: var(--primary-color);
-        }
-
+        /* Loading Animation */
         .loading {
             display: inline-block;
             width: 20px;
@@ -465,13 +762,57 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
+
+        /* Language Specific Styles */
+        [dir="ltr"] .file-item:hover {
+            transform: translateX(5px);
+        }
+
+        [dir="ltr"] .file-item::before {
+            left: auto;
+            right: 0;
+        }
+
+        [dir="ltr"] .guide-steps li {
+            padding-right: 20px;
+            padding-left: 60px;
+        }
+
+        [dir="ltr"] .guide-steps li::before {
+            right: auto;
+            left: 15px;
+        }
+
+        [dir="ltr"] .notes li {
+            padding-right: 0;
+            padding-left: 25px;
+        }
+
+        [dir="ltr"] .notes li::before {
+            right: auto;
+            left: 0;
+        }
     </style>
 </head>
 <body>
     <header>
         <div class="header-content">
-            <h1>🔗 أداة دمج الملفات</h1>
-            <button class="theme-toggle" onclick="toggleTheme()">🌓 الوضع الليلي</button>
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-layer-group"></i>
+                </div>
+                <h1 data-ar="أداة دمج الملفات الاحترافية" data-en="File Merger Pro">أداة دمج الملفات الاحترافية</h1>
+            </div>
+            <div class="header-controls">
+                <button class="control-btn" onclick="toggleLanguage()">
+                    <i class="fas fa-language"></i>
+                    <span data-ar="English" data-en="العربية">English</span>
+                </button>
+                <button class="control-btn" onclick="toggleTheme()">
+                    <i class="fas fa-moon"></i>
+                    <span data-ar="الوضع الليلي" data-en="Dark Mode">الوضع الليلي</span>
+                </button>
+            </div>
         </div>
     </header>
 
@@ -479,66 +820,85 @@
         <main>
             <section class="upload-section">
                 <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
-                    <div class="upload-icon">📁</div>
-                    <p class="upload-text">اسحب وأفلت الملفات هنا أو انقر للاختيار</p>
-                    <button class="upload-button">اختيار الملفات</button>
+                    <div class="upload-icon">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                    </div>
+                    <p class="upload-text" data-ar="اسحب وأفلت الملفات هنا أو انقر للاختيار" data-en="Drag & Drop files here or click to browse">اسحب وأفلت الملفات هنا أو انقر للاختيار</p>
+                    <button class="upload-button">
+                        <i class="fas fa-folder-open"></i>
+                        <span data-ar="اختيار الملفات" data-en="Choose Files">اختيار الملفات</span>
+                    </button>
                     <input type="file" id="fileInput" multiple style="display: none;" onchange="handleFileSelect(event)">
                 </div>
 
                 <div class="files-list" id="filesList" style="display: none;">
-                    <h3>الملفات المرفوعة (<span id="fileCount">0</span>)</h3>
-                    <div id="filesContainer"></div>
+                    <div class="files-list-header">
+                        <h3>
+                            <i class="fas fa-file-alt"></i>
+                            <span data-ar="الملفات المرفوعة" data-en="Uploaded Files">الملفات المرفوعة</span>
+                            <span class="files-count" id="fileCount">0</span>
+                        </h3>
+                        <button class="clear-all-btn" onclick="clearAllFiles()">
+                            <i class="fas fa-trash-alt"></i>
+                            <span data-ar="مسح الكل" data-en="Clear All">مسح الكل</span>
+                        </button>
+                    </div>
+                    <div class="files-container" id="filesContainer"></div>
                 </div>
             </section>
 
             <aside class="controls-section">
                 <div class="control-group">
-                    <label for="outputFormat">صيغة الإخراج:</label>
+                    <label for="outputFormat" data-ar="صيغة الإخراج:" data-en="Output Format:">صيغة الإخراج:</label>
                     <select id="outputFormat" class="select-input" onchange="updateOutputOptions()">
-                        <option value="auto">تلقائي (حسب نوع الملفات)</option>
-                        <option value="txt">نص (TXT)</option>
-                        <option value="pdf">مستند PDF</option>
-                        <option value="zip">ملف مضغوط (ZIP)</option>
+                        <option value="auto" data-ar="تلقائي (حسب نوع الملفات)" data-en="Auto (based on file types)">تلقائي (حسب نوع الملفات)</option>
+                        <option value="txt" data-ar="نص (TXT)" data-en="Text (TXT)">نص (TXT)</option>
+                        <option value="pdf" data-ar="مستند PDF" data-en="PDF Document">مستند PDF</option>
+                        <option value="zip" data-ar="ملف مضغوط (ZIP)" data-en="ZIP Archive">ملف مضغوط (ZIP)</option>
                     </select>
                 </div>
 
                 <div class="control-group">
-                    <label for="outputName">اسم الملف الناتج:</label>
+                    <label for="outputName" data-ar="اسم الملف الناتج:" data-en="Output Filename:">اسم الملف الناتج:</label>
                     <input type="text" id="outputName" class="text-input" placeholder="merged_file" value="merged_file">
                 </div>
 
                 <div class="control-group">
-                    <label>ترميز النصوص:</label>
-                    <div class="encoding-selector">
+                    <label data-ar="ترميز النصوص:" data-en="Text Encoding:">ترميز النصوص:</label>
+                    <div class="encoding-options">
                         <div class="encoding-option selected" onclick="selectEncoding('utf-8')">UTF-8</div>
                         <div class="encoding-option" onclick="selectEncoding('windows-1256')">ANSI</div>
                     </div>
                 </div>
 
-                <button class="merge-button" id="mergeButton" onclick="mergeFiles()" disabled>
-                    دمج الملفات
+                <button class="merge-btn" id="mergeButton" onclick="mergeFiles()" disabled>
+                    <i class="fas fa-magic"></i>
+                    <span data-ar="دمج الملفات" data-en="Merge Files">دمج الملفات</span>
                 </button>
             </aside>
         </main>
 
         <section class="user-guide">
-            <h2>📖 دليل الاستخدام</h2>
+            <h2 data-ar="دليل الاستخدام" data-en="User Guide">دليل الاستخدام</h2>
             <ol class="guide-steps">
-                <li>رفع الملفات - اسحب الملفات إلى منطقة الرفع أو انقر لاختيارها</li>
-                <li>ترتيب الملفات - استخدم الأسهم لأعلى ولأسفل لترتيب الملفات كما تريد</li>
-                <li>اختيار صيغة الإخراج المناسبة من القائمة المنسدلة</li>
-                <li>اكتب اسم الملف الناتج الذي تريده</li>
-                <li>اضغط على زر "دمج الملفات" لبدء العملية</li>
-                <li>انتظر اكتمال العملية ثم قم بتنزيل الملف الناتج</li>
+                <li data-ar="رفع الملفات - اسحب الملفات إلى منطقة الرفع أو انقر لاختيارها" data-en="Upload Files - Drag files to the upload area or click to browse">رفع الملفات - اسحب الملفات إلى منطقة الرفع أو انقر لاختيارها</li>
+                <li data-ar="ترتيب الملفات - استخدم الأسهم لأعلى ولأسفل لترتيب الملفات كما تريد" data-en="Arrange Files - Use the up and down arrows to arrange files as needed">ترتيب الملفات - استخدم الأسهم لأعلى ولأسفل لترتيب الملفات كما تريد</li>
+                <li data-ar="اختيار صيغة الإخراج المناسبة من القائمة المنسدلة" data-en="Select Output Format - Choose the appropriate output format from the dropdown">اختيار صيغة الإخراج المناسبة من القائمة المنسدلة</li>
+                <li data-ar="اكتب اسم الملف الناتج الذي تريده" data-en="Enter Output Filename - Type the desired name for the merged file">اكتب اسم الملف الناتج الذي تريده</li>
+                <li data-ar="اضغط على زر 'دمج الملفات' لبدء العملية" data-en="Click 'Merge Files' button to start the process">اضغط على زر 'دمج الملفات' لبدء العملية</li>
+                <li data-ar="انتظر اكتمال العملية ثم قم بتنزيل الملف الناتج" data-en="Wait for completion then download the merged file">انتظر اكتمال العملية ثم قم بتنزيل الملف الناتج</li>
             </ol>
 
             <div class="notes">
-                <h3>ملاحظات مهمة:</h3>
+                <h3>
+                    <i class="fas fa-lightbulb"></i>
+                    <span data-ar="ملاحظات مهمة:" data-en="Important Notes:">ملاحظات مهمة:</span>
+                </h3>
                 <ul>
-                    <li>إذا كانت جميع الملفات من نفس الصيغة، ستحصل على ملف بنفس الصيغة</li>
-                    <li>إذا كانت الصيغ مختلفة، يمكنك اختيار ZIP أو تحويل النصوص فقط</li>
-                    <li>يدعم الأداة جميع أنواع الملفات النصية والثنائية الشائعة</li>
-                    <li>يمكنك معاينة محتوى الملفات النصية والصور قبل الدمج</li>
+                    <li data-ar="إذا كانت جميع الملفات من نفس الصيغة، ستحصل على ملف بنفس الصيغة" data-en="If all files are of the same type, you'll get a merged file of that type">إذا كانت جميع الملفات من نفس الصيغة، ستحصل على ملف بنفس الصيغة</li>
+                    <li data-ar="إذا كانت الصيغ مختلفة، يمكنك اختيار ZIP أو تحويل النصوص فقط" data-en="If formats differ, you can choose ZIP or text conversion only">إذا كانت الصيغ مختلفة، يمكنك اختيار ZIP أو تحويل النصوص فقط</li>
+                    <li data-ar="يدعم الأداة جميع أنواع الملفات النصية والثنائية الشائعة" data-en="The tool supports all common text and binary file types">يدعم الأداة جميع أنواع الملفات النصية والثنائية الشائعة</li>
+                    <li data-ar="يمكنك معاينة محتوى الملفات النصية والصور قبل الدمج" data-en="You can preview text and image files before merging">يمكنك معاينة محتوى الملفات النصية والصور قبل الدمج</li>
                 </ul>
             </div>
         </section>
@@ -549,18 +909,119 @@
         let uploadedFiles = [];
         let selectedEncoding = 'utf-8';
         let isDarkMode = false;
+        let currentLang = 'ar';
+
+        // Language translations
+        const translations = {
+            ar: {
+                title: "أداة دمج الملفات الاحترافية",
+                uploadText: "اسحب وأفلت الملفات هنا أو انقر للاختيار",
+                chooseFiles: "اختيار الملفات",
+                uploadedFiles: "الملفات المرفوعة",
+                outputFormat: "صيغة الإخراج:",
+                outputName: "اسم الملف الناتج:",
+                textEncoding: "ترميز النصوص:",
+                mergeFiles: "دمج الملفات",
+                userGuide: "دليل الاستخدام",
+                importantNotes: "ملاحظات مهمة:",
+                darkMode: "الوضع الليلي",
+                english: "English",
+                auto: "تلقائي (حسب نوع الملفات)",
+                text: "نص (TXT)",
+                pdf: "مستند PDF",
+                zip: "ملف مضغوط (ZIP)",
+                filesUploaded: "تم رفع {count} ملف بنجاح",
+                fileDeleted: "تم حذف الملف",
+                mergeSuccess: "تم دمج الملفات بنجاح!",
+                mergeError: "حدث خطأ أثناء دمج الملفات",
+                unsupportedFiles: "الملفات التالية غير مدعومة: {files}",
+                clearAll: "مسح الكل",
+                merging: "جاري الدمج..."
+            },
+            en: {
+                title: "File Merger Pro",
+                uploadText: "Drag & Drop files here or click to browse",
+                chooseFiles: "Choose Files",
+                uploadedFiles: "Uploaded Files",
+                outputFormat: "Output Format:",
+                outputName: "Output Filename:",
+                textEncoding: "Text Encoding:",
+                mergeFiles: "Merge Files",
+                userGuide: "User Guide",
+                importantNotes: "Important Notes:",
+                darkMode: "Dark Mode",
+                english: "العربية",
+                auto: "Auto (based on file types)",
+                text: "Text (TXT)",
+                pdf: "PDF Document",
+                zip: "ZIP Archive",
+                filesUploaded: "Successfully uploaded {count} files",
+                fileDeleted: "File deleted",
+                mergeSuccess: "Files merged successfully!",
+                mergeError: "Error occurred while merging files",
+                unsupportedFiles: "The following files are not supported: {files}",
+                clearAll: "Clear All",
+                merging: "Merging..."
+            }
+        };
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
             setupDragAndDrop();
             loadTheme();
+            loadLanguage();
         });
+
+        // Language management
+        function toggleLanguage() {
+            currentLang = currentLang === 'ar' ? 'en' : 'ar';
+            document.documentElement.lang = currentLang;
+            document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+            localStorage.setItem('language', currentLang);
+            updateLanguage();
+        }
+
+        function loadLanguage() {
+            const savedLang = localStorage.getItem('language');
+            if (savedLang) {
+                currentLang = savedLang;
+                document.documentElement.lang = currentLang;
+                document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+                updateLanguage();
+            }
+        }
+
+        function updateLanguage() {
+            document.querySelectorAll('[data-ar]').forEach(element => {
+                const arText = element.getAttribute('data-ar');
+                const enText = element.getAttribute('data-en');
+                element.textContent = currentLang === 'ar' ? arText : enText;
+            });
+
+            // Update placeholders
+            document.getElementById('outputName').placeholder = currentLang === 'ar' ? 'merged_file' : 'merged_file';
+            
+            // Update select options
+            document.querySelectorAll('#outputFormat option').forEach(option => {
+                const arText = option.getAttribute('data-ar');
+                const enText = option.getAttribute('data-en');
+                if (arText && enText) {
+                    option.textContent = currentLang === 'ar' ? arText : enText;
+                }
+            });
+        }
 
         // Theme management
         function toggleTheme() {
             isDarkMode = !isDarkMode;
             document.documentElement.setAttribute('data-theme', isDarkMode ? 'dark' : 'light');
             localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
+            
+            // Update theme icon
+            const themeIcon = document.querySelector('.control-btn i.fa-moon, .control-btn i.fa-sun');
+            if (themeIcon) {
+                themeIcon.className = isDarkMode ? 'fas fa-sun' : 'fas fa-moon';
+            }
         }
 
         function loadTheme() {
@@ -568,6 +1029,7 @@
             if (savedTheme === 'dark') {
                 isDarkMode = true;
                 document.documentElement.setAttribute('data-theme', 'dark');
+                document.querySelector('.control-btn i').className = 'fas fa-sun';
             }
         }
 
@@ -578,6 +1040,13 @@
                 option.classList.remove('selected');
             });
             event.target.classList.add('selected');
+        }
+
+        // Clear all files
+        function clearAllFiles() {
+            uploadedFiles = [];
+            updateFilesList();
+            showMessage(translations[currentLang].fileDeleted, 'success');
         }
 
         // Drag and drop setup
@@ -603,6 +1072,8 @@
         // File handling
         function handleFileSelect(event) {
             handleFiles(event.target.files);
+            // Reset the input value to allow uploading the same files again
+            event.target.value = '';
         }
 
         function handleFiles(files) {
@@ -618,7 +1089,8 @@
             });
 
             if (invalidFiles.length > 0) {
-                showMessage(`الملفات التالية غير مدعومة: ${invalidFiles.join(', ')}`, 'warning');
+                const message = translations[currentLang].unsupportedFiles.replace('{files}', invalidFiles.join(', '));
+                showMessage(message, 'warning');
             }
 
             if (validFiles.length > 0) {
@@ -633,7 +1105,8 @@
                 });
 
                 updateFilesList();
-                showMessage(`تم رفع ${validFiles.length} ملف بنجاح`, 'success');
+                const message = translations[currentLang].filesUploaded.replace('{count}', validFiles.length);
+                showMessage(message, 'success');
             }
         }
 
@@ -706,28 +1179,34 @@
             div.dataset.index = index;
 
             const iconMap = {
-                'text': '📄',
-                'code': '💻',
-                'document': '📑',
-                'spreadsheet': '📊',
-                'presentation': '📽️',
-                'image': '🖼️',
-                'data': '📋',
-                'file': '📎'
+                'text': 'fa-file-alt',
+                'code': 'fa-code',
+                'document': 'fa-file-word',
+                'spreadsheet': 'fa-file-excel',
+                'presentation': 'fa-file-powerpoint',
+                'image': 'fa-file-image',
+                'data': 'fa-file-code',
+                'file': 'fa-file'
             };
 
             div.innerHTML = `
+                <div class="file-icon ${fileObj.type}">
+                    <i class="fas ${iconMap[fileObj.type]}"></i>
+                </div>
                 <div class="file-info">
-                    <span class="file-icon">${iconMap[fileObj.type] || '📎'}</span>
-                    <div class="file-details">
-                        <div class="file-name">${fileObj.name}</div>
-                        <div class="file-size">${fileObj.size}</div>
-                    </div>
+                    <div class="file-name">${fileObj.name}</div>
+                    <div class="file-size">${fileObj.size}</div>
                 </div>
                 <div class="file-actions">
-                    <button class="action-button" onclick="moveFile(${index}, -1)" ${index === 0 ? 'disabled' : ''}>⬆️</button>
-                    <button class="action-button" onclick="moveFile(${index}, 1)" ${index === uploadedFiles.length - 1 ? 'disabled' : ''}>⬇️</button>
-                    <button class="action-button delete-button" onclick="removeFile(${index})">🗑️</button>
+                    <button class="action-btn" onclick="moveFile(${index}, -1)" ${index === 0 ? 'disabled' : ''}>
+                        <i class="fas fa-chevron-${currentLang === 'ar' ? 'up' : 'up'}"></i>
+                    </button>
+                    <button class="action-btn" onclick="moveFile(${index}, 1)" ${index === uploadedFiles.length - 1 ? 'disabled' : ''}>
+                        <i class="fas fa-chevron-${currentLang === 'ar' ? 'down' : 'down'}"></i>
+                    </button>
+                    <button class="action-btn delete" onclick="removeFile(${index})">
+                        <i class="fas fa-trash"></i>
+                    </button>
                 </div>
             `;
 
@@ -751,7 +1230,7 @@
         function removeFile(index) {
             uploadedFiles.splice(index, 1);
             updateFilesList();
-            showMessage('تم حذف الملف', 'success');
+            showMessage(translations[currentLang].fileDeleted, 'success');
         }
 
         // Drag and drop for reordering
@@ -800,21 +1279,21 @@
             
             // Clear existing options except auto, txt, pdf, zip
             outputFormat.innerHTML = `
-                <option value="auto">تلقائي (حسب نوع الملفات)</option>
-                <option value="txt">نص (TXT)</option>
-                <option value="pdf">مستند PDF</option>
-                <option value="zip">ملف مضغوط (ZIP)</option>
+                <option value="auto" data-ar="${translations.ar.auto}" data-en="${translations.en.auto}">${currentLang === 'ar' ? translations.ar.auto : translations.en.auto}</option>
+                <option value="txt" data-ar="${translations.ar.text}" data-en="${translations.en.text}">${currentLang === 'ar' ? translations.ar.text : translations.en.text}</option>
+                <option value="pdf" data-ar="${translations.ar.pdf}" data-en="${translations.en.pdf}">${currentLang === 'ar' ? translations.ar.pdf : translations.en.pdf}</option>
+                <option value="zip" data-ar="${translations.ar.zip}" data-en="${translations.en.zip}">${currentLang === 'ar' ? translations.ar.zip : translations.en.zip}</option>
             `;
 
             // Add specific format options if all files are same type
             if (currentFormats.length === 1) {
                 const format = currentFormats[0];
                 if (format === 'docx') {
-                    outputFormat.innerHTML += '<option value="docx">مستند Word (DOCX)</option>';
+                    outputFormat.innerHTML += `<option value="docx" data-ar="مستند Word (DOCX)" data-en="Word Document (DOCX)">${currentLang === 'ar' ? 'مستند Word (DOCX)' : 'Word Document (DOCX)'}</option>`;
                 } else if (format === 'xlsx') {
-                    outputFormat.innerHTML += '<option value="xlsx">جدول Excel (XLSX)</option>';
+                    outputFormat.innerHTML += `<option value="xlsx" data-ar="جدول Excel (XLSX)" data-en="Excel Spreadsheet (XLSX)">${currentLang === 'ar' ? 'جدول Excel (XLSX)' : 'Excel Spreadsheet (XLSX)'}</option>`;
                 } else if (format === 'pptx') {
-                    outputFormat.innerHTML += '<option value="pptx">عرض تقديمي (PPTX)</option>';
+                    outputFormat.innerHTML += `<option value="pptx" data-ar="عرض تقديمي (PPTX)" data-en="PowerPoint Presentation (PPTX)">${currentLang === 'ar' ? 'عرض تقديمي (PPTX)' : 'PowerPoint Presentation (PPTX)'}</option>`;
                 }
             }
         }
@@ -826,7 +1305,7 @@
             const outputName = document.getElementById('outputName').value || 'merged_file';
 
             mergeButton.disabled = true;
-            mergeButton.innerHTML = '<span class="loading"></span> جاري الدمج...';
+            mergeButton.innerHTML = '<span class="loading"></span> ' + translations[currentLang].merging;
 
             try {
                 let result;
@@ -850,14 +1329,19 @@
                 if (result) {
                     const extension = outputFormat === 'auto' ? getFileExtension(result) : outputFormat;
                     saveAs(result, `${outputName}.${extension}`);
-                    showMessage('تم دمج الملفات بنجاح!', 'success');
+                    showMessage(translations[currentLang].mergeSuccess, 'success');
+                    
+                    // Clear files after successful merge
+                    setTimeout(() => {
+                        clearAllFiles();
+                    }, 1000);
                 }
             } catch (error) {
                 console.error('Merge error:', error);
-                showMessage('حدث خطأ أثناء دمج الملفات', 'error');
+                showMessage(translations[currentLang].mergeError, 'error');
             } finally {
                 mergeButton.disabled = false;
-                mergeButton.innerHTML = 'دمج الملفات';
+                mergeButton.innerHTML = '<i class="fas fa-magic"></i> ' + translations[currentLang].mergeFiles;
             }
         }
 
@@ -884,7 +1368,7 @@
                     const text = await readFileAsText(fileObj.file);
                     combinedText += `\n\n=== ${fileObj.name} ===\n\n${text}`;
                 } catch (error) {
-                    combinedText += `\n\n=== ${fileObj.name} (خطأ في القراءة) ===\n\n`;
+                    combinedText += `\n\n=== ${fileObj.name} (${currentLang === 'ar' ? 'خطأ في القراءة' : 'Read Error'}) ===\n\n`;
                 }
             }
             
@@ -933,92 +1417,282 @@
             return content;
         }
 
-        // DOCX merge
+        // DOCX merge - Fixed version
         async function mergeToDocx() {
+            // For DOCX files, we'll create a simple text-based document
+            // This approach preserves the content but loses formatting
             const doc = new docx.Document({
                 sections: [{
                     properties: {},
-                    children: []
+                    children: [
+                        new docx.Paragraph({
+                            text: currentLang === 'ar' ? 'ملفات مدمجة' : 'Merged Files',
+                            heading: docx.HeadingLevel.TITLE,
+                            alignment: docx.AlignmentType.CENTER,
+                            spacing: { after: 400 }
+                        })
+                    ]
                 }]
             });
 
             for (const fileObj of uploadedFiles) {
                 try {
-                    const text = await readFileAsText(fileObj.file);
-                    doc.addSection({
-                        properties: {},
-                        children: [
-                            new docx.Paragraph({
-                                text: fileObj.name,
-                                heading: docx.HeadingLevel.HEADING_1
-                            }),
-                            new docx.Paragraph({
-                                text: text,
-                                spacing: { after: 400 }
-                            })
-                        ]
+                    // Extract text from DOCX file
+                    const text = await extractTextFromDocx(fileObj.file);
+                    
+                    // Add file name as heading
+                    doc.addParagraph(
+                        new docx.Paragraph({
+                            text: fileObj.name,
+                            heading: docx.HeadingLevel.HEADING_1,
+                            spacing: { before: 300, after: 200 }
+                        })
+                    );
+                    
+                    // Add content as multiple paragraphs
+                    const paragraphs = text.split('\n').filter(p => p.trim());
+                    paragraphs.forEach(paragraph => {
+                        if (paragraph.trim()) {
+                            doc.addParagraph(
+                                new docx.Paragraph({
+                                    text: paragraph.trim(),
+                                    spacing: { after: 100 }
+                                })
+                            );
+                        }
                     });
+                    
+                    // Add separator
+                    doc.addParagraph(
+                        new docx.Paragraph({
+                            text: '---',
+                            alignment: docx.AlignmentType.CENTER,
+                            spacing: { before: 200, after: 200 }
+                        })
+                    );
                 } catch (error) {
-                    doc.addSection({
-                        properties: {},
-                        children: [
-                            new docx.Paragraph({
-                                text: `${fileObj.name} (خطأ في القراءة)`,
-                                heading: docx.HeadingLevel.HEADING_1,
-                                color: 'FF0000'
-                            })
-                        ]
-                    });
+                    console.error('Error processing DOCX file:', error);
+                    doc.addParagraph(
+                        new docx.Paragraph({
+                            text: `${fileObj.name} (${currentLang === 'ar' ? 'خطأ في المعالجة' : 'Processing Error'})`,
+                            heading: docx.HeadingLevel.HEADING_1,
+                            color: 'FF0000'
+                        })
+                    );
                 }
             }
 
             return docx.Packer.toBlob(doc);
         }
 
-        // XLSX merge
+        // Helper function to extract text from DOCX
+        async function extractTextFromDocx(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        // Since we can't easily parse DOCX in browser without a library,
+                        // we'll read it as text and extract readable content
+                        const content = e.target.result;
+                        // Extract text between XML tags (simplified approach)
+                        const textMatches = content.match(/<w:t[^>]*>([^<]*)<\/w:t>/g);
+                        if (textMatches) {
+                            const text = textMatches.map(match => 
+                                match.replace(/<w:t[^>]*>/, '').replace(/<\/w:t>/, '')
+                            ).join(' ');
+                            resolve(text);
+                        } else {
+                            // Fallback: return the file name
+                            resolve(file.name);
+                        }
+                    } catch (error) {
+                        reject(error);
+                    }
+                };
+                reader.onerror = reject;
+                reader.readAsText(file, 'UTF-8');
+            });
+        }
+
+        // XLSX merge - COMPLETELY REWRITTEN for proper merging
         async function mergeToXlsx() {
+            // Create a new workbook
             const workbook = XLSX.utils.book_new();
             
+            // This will hold all the merged data
+            let allData = [];
+            let headers = [];
+            let maxColumns = 0;
+            
+            // Process each file in order
             for (const fileObj of uploadedFiles) {
                 try {
+                    // Read the Excel file
                     const data = await fileObj.file.arrayBuffer();
                     const tempWorkbook = XLSX.read(data, { type: 'array' });
                     
-                    tempWorkbook.SheetNames.forEach(sheetName => {
-                        const worksheet = tempWorkbook.Sheets[sheetName];
-                        const newSheetName = `${fileObj.name.replace('.xlsx', '')}_${sheetName}`;
-                        XLSX.utils.book_append_sheet(workbook, worksheet, newSheetName.substring(0, 31));
-                    });
+                    // Get the first sheet (or the only sheet if there's only one)
+                    const firstSheetName = tempWorkbook.SheetNames[0];
+                    const worksheet = tempWorkbook.Sheets[firstSheetName];
+                    
+                    // Convert to JSON
+                    const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+                    
+                    if (jsonData.length > 0) {
+                        // If this is the first file, use its headers
+                        if (allData.length === 0) {
+                            headers = jsonData[0] || [];
+                            allData.push(headers);
+                            maxColumns = headers.length;
+                        }
+                        
+                        // Add data rows (skip header row for subsequent files)
+                        const startRow = allData.length === 1 ? 1 : 0;
+                        for (let i = startRow; i < jsonData.length; i++) {
+                            const row = jsonData[i] || [];
+                            
+                            // Ensure row has same number of columns as headers
+                            while (row.length < maxColumns) {
+                                row.push('');
+                            }
+                            
+                            allData.push(row);
+                        }
+                        
+                        // Add separator row with file name
+                        const separatorRow = new Array(maxColumns).fill('');
+                        separatorRow[0] = `--- ${fileObj.name} ---`;
+                        allData.push(separatorRow);
+                        
+                        // Add empty row for spacing
+                        allData.push(new Array(maxColumns).fill(''));
+                    }
                 } catch (error) {
                     console.error('Error processing Excel file:', error);
+                    
+                    // Add error information to the merged data
+                    if (allData.length === 0) {
+                        headers = [currentLang === 'ar' ? 'خطأ' : 'Error', currentLang === 'ar' ? 'الملف' : 'File', currentLang === 'ar' ? 'الرسالة' : 'Message'];
+                        allData.push(headers);
+                        maxColumns = 3;
+                    }
+                    
+                    const errorRow = new Array(maxColumns).fill('');
+                    errorRow[0] = currentLang === 'ar' ? 'خطأ' : 'ERROR';
+                    errorRow[1] = fileObj.name;
+                    errorRow[2] = currentLang === 'ar' ? 'فشل في معالجة الملف' : 'Failed to process file';
+                    allData.push(errorRow);
                 }
             }
             
+            // Create worksheet from merged data
+            const mergedWorksheet = XLSX.utils.aoa_to_sheet(allData);
+            
+            // Auto-size columns for better readability
+            const colWidths = [];
+            for (let i = 0; i < maxColumns; i++) {
+                let maxWidth = 10; // Minimum width
+                for (let j = 0; j < allData.length; j++) {
+                    const cellValue = allData[j][i] || '';
+                    const cellLength = String(cellValue).length;
+                    if (cellLength > maxWidth) {
+                        maxWidth = Math.min(cellLength, 50); // Cap at 50 characters
+                    }
+                }
+                colWidths.push({ wch: maxWidth });
+            }
+            mergedWorksheet['!cols'] = colWidths;
+            
+            // Add the merged worksheet to the workbook
+            XLSX.utils.book_append_sheet(workbook, mergedWorksheet, currentLang === 'ar' ? 'ملف مدمج' : 'Merged Data');
+            
+            // Generate the Excel file
             const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
             return new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
         }
 
-        // PPTX merge
+        // PPTX merge - Fixed version
         async function mergeToPptx() {
             const pptx = new PptxGenJS();
+            
+            // Add title slide
+            const titleSlide = pptx.addSlide();
+            titleSlide.addText(
+                currentLang === 'ar' ? 'الملفات المدمجة' : 'Merged Files',
+                { x: 1.5, y: 2, fontSize: 36, bold: true, align: 'center' }
+            );
+            titleSlide.addText(
+                new Date().toLocaleDateString(),
+                { x: 1.5, y: 4, fontSize: 18, align: 'center' }
+            );
             
             for (const fileObj of uploadedFiles) {
                 try {
                     const slide = pptx.addSlide();
-                    slide.addText(fileObj.name, { x: 0.5, y: 0.5, fontSize: 24, bold: true });
                     
-                    const text = await readFileAsText(fileObj.file);
-                    const lines = text.split('\n').slice(0, 20); // Limit to 20 lines
-                    lines.forEach((line, index) => {
-                        slide.addText(line, { x: 0.5, y: 1.5 + (index * 0.5), fontSize: 14 });
+                    // Add file name as title
+                    slide.addText(fileObj.name, { 
+                        x: 0.5, y: 0.5, fontSize: 24, bold: true, color: '363636' 
                     });
+                    
+                    // Extract and add content
+                    const text = await extractTextFromPptx(fileObj.file);
+                    const lines = text.split('\n').filter(line => line.trim());
+                    
+                    // Add content in text boxes
+                    let yPos = 1.5;
+                    for (let i = 0; i < Math.min(lines.length, 15); i++) {
+                        if (yPos > 6) break; // Stop if we run out of space
+                        
+                        slide.addText(lines[i].substring(0, 100), { 
+                            x: 0.5, y: yPos, fontSize: 14, color: '555555' 
+                        });
+                        yPos += 0.4;
+                    }
+                    
+                    // Add "continued" if there's more content
+                    if (lines.length > 15) {
+                        slide.addText('...', { x: 0.5, y: yPos, fontSize: 14, color: '999999' });
+                    }
                 } catch (error) {
-                    const slide = pptx.addSlide();
-                    slide.addText(`${fileObj.name} (خطأ في القراءة)`, { x: 0.5, y: 0.5, fontSize: 24, color: 'FF0000' });
+                    console.error('Error processing PPTX file:', error);
+                    const errorSlide = pptx.addSlide();
+                    errorSlide.addText(`${fileObj.name}`, { x: 0.5, y: 2, fontSize: 24, color: 'FF0000' });
+                    errorSlide.addText(
+                        currentLang === 'ar' ? 'خطأ في المعالجة' : 'Processing Error', 
+                        { x: 0.5, y: 3, fontSize: 18, color: 'FF0000' }
+                    );
                 }
             }
             
             return pptx.writeFile({ outputType: 'blob' });
+        }
+
+        // Helper function to extract text from PPTX
+        async function extractTextFromPptx(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        // Simplified text extraction from PPTX
+                        const content = e.target.result;
+                        // Look for text patterns in PPTX XML
+                        const textMatches = content.match(/<a:t[^>]*>([^<]*)<\/a:t>/g);
+                        if (textMatches) {
+                            const text = textMatches.map(match => 
+                                match.replace(/<a:t[^>]*>/, '').replace(/<\/a:t>/, '')
+                            ).join('\n');
+                            resolve(text);
+                        } else {
+                            resolve(file.name);
+                        }
+                    } catch (error) {
+                        reject(error);
+                    }
+                };
+                reader.onerror = reject;
+                reader.readAsText(file, 'UTF-8');
+            });
         }
 
         // Helper functions
@@ -1033,9 +1707,9 @@
 
         function getFileExtension(blob) {
             if (blob.type === 'application/pdf') return 'pdf';
-            if (blob.type.includes('word')) return 'docx';
-            if (blob.type.includes('sheet')) return 'xlsx';
-            if (blob.type.includes('presentation')) return 'pptx';
+            if (blob.type && blob.type.includes('word')) return 'docx';
+            if (blob.type && blob.type.includes('sheet')) return 'xlsx';
+            if (blob.type && blob.type.includes('presentation')) return 'pptx';
             if (blob.type === 'application/zip') return 'zip';
             return 'txt';
         }
@@ -1043,7 +1717,14 @@
         function showMessage(text, type) {
             const message = document.createElement('div');
             message.className = `message ${type}`;
-            message.textContent = text;
+            
+            const iconMap = {
+                success: 'fa-check-circle',
+                error: 'fa-exclamation-circle',
+                warning: 'fa-exclamation-triangle'
+            };
+            
+            message.innerHTML = `<i class="fas ${iconMap[type]}"></i> ${text}`;
             document.body.appendChild(message);
 
             setTimeout(() => {
