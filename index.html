@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>دمج الملفات - أداة دمج ملفات نصية وPDF وDOCX</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mammoth@1.4.15/browser/mammoth.browser.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.0/papaparse.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/lucide-static@0.168.0/font/lucide.css" rel="stylesheet">
+</head>
+<body>
+  <div class="container">
+    <!-- الشعار والعنوان -->
+    <header>
+      <h1><i class="lucide-file-plus"></i> أداة دمج الملفات</h1>
+      <p>دمج ملفاتك (TXT, CSV, PDF, DOCX) في ملف واحد بسهولة</p>
+    </header>
+
+    <!-- وضع ليلي -->
+    <button id="darkModeToggle" class="btn btn-secondary">🌙 الوضع الليلي</button>
+
+    <!-- قسم رفع الملفات -->
+    <section class="upload-section">
+      <div id="dropZone" class="drop-zone">
+        <i class="lucide-upload-cloud"></i>
+        <p>اسحب الملفات هنا أو انقر لاختيارها</p>
+        <input type="file" id="fileInput" multiple accept=".txt,.csv,.pdf,.docx,.doc" hidden />
+      </div>
+    </section>
+
+    <!-- قائمة الملفات المرفوعة -->
+    <section id="fileListSection" class="file-list-section hidden">
+      <h2>الملفات المرفوعة (<span id="fileCount">0</span>)</h2>
+      <p class="info">يمكنك سحب الملفات لتغيير الترتيب</p>
+      <ul id="fileList" class="file-list"></ul>
+    </section>
+
+    <!-- خيارات الدمج -->
+    <section id="mergeOptions" class="merge-options hidden">
+      <div class="form-group">
+        <label for="outputFormat">اختر صيغة الملف الناتج:</label>
+        <select id="outputFormat" class="select">
+          <option value="txt">نص عادي (.txt)</option>
+          <option value="pdf">مستند PDF (.pdf)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="outputFilename">اسم الملف النهائي:</label>
+        <input type="text" id="outputFilename" class="input" value="الملف_المدمج" placeholder="أدخل اسم الملف" />
+      </div>
+      <button id="mergeButton" class="btn btn-primary"> <i class="lucide-file-contract"></i> دمج الملفات</button>
+    </section>
+
+    <!-- شرح الاستخدام -->
+    <section class="guide-section">
+      <h2><i class="lucide-help-circle"></i> كيفية الاستخدام</h2>
+      <ol class="steps">
+        <li>ارفع ملفاتك (TXT, CSV, PDF, DOCX) باستخدام زر الرفع أو بالسحب والإفلات.</li>
+        <li>غير ترتيب الملفات حسب رغبتك بالسحب أو الأزرار.</li>
+        <li>اختر الصيغة النهائية (TXT أو PDF).</li>
+        <li>أدخل اسمًا للملف المدمج.</li>
+        <li>اضغط على "دمج الملفات" وقم بتنزيل النتيجة فورًا.</li>
+      </ol>
+      <div class="tips">
+        <strong>نصائح:</strong>
+        <ul>
+          <li>للحصول على أفضل نتيجة في PDF، استخدم ملفات نصية واضحة.</li>
+          <li>الملفات الفارغة سيتم تخطيها تلقائيًا.</li>
+          <li>الصور داخل DOCX أو PDF لن تظهر في النص المستخرج.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- رسالة حالة -->
+    <div id="statusMessage" class="status hidden"></div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
